@@ -1,0 +1,222 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to right, #cadbec, #f5f6f7);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* ---------------- TÍTULO PRINCIPAL (afuera del cuadro) ---------------- */
+.titulo-principal {
+  font-size: 24px;
+  font-weight: bold;
+  color: #6c557a;
+  margin-top: 80px; /* 🔹 baja el título para que no choque con la barra superior */
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  text-shadow: 1px 1px 2px rgba(108, 85, 122, 0.3);
+}
+
+/* ---------------- CUADRO DE PERFIL ---------------- */
+/*.contenedor {
+  width: 450px;
+  background: linear-gradient(to right, #6c557a, #bbab92);
+  padding: 35px 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  margin-top: 15px;
+  max-height: 700px;
+  overflow-y: auto;
+}
+
+/* ---------------- FORMULARIO ---------------- */
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+form label {
+  width: 90%;
+  text-align: left;
+  margin-top: 3px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #3e2f40;
+}
+
+form input {
+  width: 90%;
+  padding: 5px;
+  margin-top: 2px;
+  margin-bottom: 4px;
+  background: #e5ded3;
+  border: 1px solid #6c557a;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+/* ---------------- BOTONES ---------------- */
+.btn-guardar,
+.btn-Eliminar,
+.btn-cerrar {
+  width: 90%;
+  padding: 6px;
+  margin-top: 6px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  font-size: 12px;
+}
+
+/* Guardar cambios */
+.btn-guardar {
+  background-color: #cadbec;
+  color: #000;
+}
+.btn-guardar:hover {
+  background-color: #a6b6c9;
+}
+
+/* Eliminar cuenta */
+.btn-Eliminar {
+  background-color: #b6a999;
+  color: #000;
+}
+.btn-Eliminar:hover {
+  background-color: #a6917a;
+}
+
+/* Cerrar sesión */
+.btn-cerrar {
+  background-color: #8b7b88;
+  color: white;
+}
+.btn-cerrar:hover {
+  background-color: #6c557a;
+}
+
+/* ---------------- BARRA SUPERIOR ---------------- */
+.barra-superior {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 15px;
+  background: linear-gradient(to right, #e5ded3, #b6a999);
+  height: 65px;
+  box-shadow: 0 3px 5px #e5ded3;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 55px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.barra-superior .logo {
+  height: 87px;
+  margin-right: 40px;
+}
+
+/* ---------------- MENÚ LATERAL ---------------- */
+.Menu {
+  height: calc(100% - 65px); /* 🔹 deja espacio debajo de la barra superior */
+  width: 200px;
+  position: fixed;
+  top: 65px; /* 🔹 empieza justo debajo de la barra superior */
+  left: 0;
+  background: linear-gradient(to bottom, #f5f6f7, #b6a999, #cadbec);
+  transition: transform 0.5s ease;
+  transform: translateX(-200px);
+  font-size: 20px;
+  z-index: 999;
+  padding-top: 20px; /* 🔹 espacio interno */
+}
+
+.Menu ul {
+  padding: 0 10px;
+}
+
+.Menu ul li {
+  list-style: none;
+  margin-bottom: 10px;
+}
+
+.Menu ul li a {
+  color: #6c557a;
+  font-weight: 500;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  text-transform: capitalize;
+  text-decoration: none;
+  transition: all 0.2s ease-out;
+  gap: 10px;
+  font-size: 16px;
+}
+
+.Menu ul li:hover a {
+  color: #f0c2be;
+  background-color: #6c557a;
+}
+
+.Menu ul li a i {
+  color: #6c557a;
+  min-width: 25px;
+  text-align: center;
+}
+
+/* ---------------- BOTÓN HAMBURGUESA ---------------- */
+.Lineas {
+  position: fixed;
+  height: 30px;
+  width: 30px;
+  top: 20px;
+  left: 20px;
+  z-index: 1100;
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #e6d6ad;
+  box-shadow: 0 0 10px #6c557a;
+}
+
+.Lineas .common {
+  position: absolute;
+  height: 2px;
+  width: 20px;
+  background-color: #6c557a;
+  border-radius: 50px;
+  transition: 0.3s ease;
+}
+
+.Lineas .top_line {
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.Lineas .middle_line {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.Lineas .bottom_line {
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
