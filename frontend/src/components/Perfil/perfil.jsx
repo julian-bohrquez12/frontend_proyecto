@@ -1,174 +1,100 @@
-// src/components/Perfil.jsx
-import React, { useState, useEffect } from "react";
-import "./perfil.css";
-import LogoEmpren from "../../assets/Logo_Empren.png";
-
-const API_URL = "http://localhost:4000";
+import React, { useEffect, useState } from "react";
 
 const Perfil = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
+    const idUsuario = 1; // ← Cambia esto por el ID que obtengas de login
+    const [usuario, setUsuario] = useState({
+        Nombre: "",
+        Apellido: "",
+        Correo: "",
+        Usuario: "",
+    });
 
-  const [formData, setFormData] = useState({
-    nombre: "",
-    apellido: "",
-    correo: "",
-    usuario: "",
-    imagen: "https://via.placeholder.com/100?text=+",
-    imagenFile: null,
-  });
+    const [mensaje, setMensaje] = useState("");
 
-  // 🔹 useEffect correctamente dentro del componente
-  useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      nombre: "",
-      apellido: "",
-      correo: "",
-      usuario: "",
-    }));
-  }, []);
+    // Cargar datos del usuario cuando se abre la vista
+    useEffect(() => {
+        fetch(`http://localhost:3000/usuarios/${idUsuario}`)
+            .then(res => res.json())
+            .then(data => {
+                setUsuario(data);
+            })
+            .catch(err => console.log("Error al cargar usuario:", err));
+    }, []);
 
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    setFormData({ ...formData, [id]: value });
-  };
-
-  const handleImageChange = (e) => {
-    const archivo = e.target.files[0];
-    if (archivo) {
-      setFormData({
-        ...formData,
-        imagen: URL.createObjectURL(archivo),
-        imagenFile: archivo,
-      });
-    }
-  };
-
-  // 🔹 GUARDAR CAMBIOS (PUT)
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      let res;
-
-      if (formData.imagenFile) {
-        const fd = new FormData();
-        fd.append("nombre", formData.nombre);
-        fd.append("apellido", formData.apellido);
-        fd.append("correo", formData.correo);
-        fd.append("imagen", formData.imagenFile);
-
-        res = await fetch(`${API_URL}/perfil/${formData.usuario}`, {
-          method: "PUT",
-          body: fd,
+    // Manejar los cambios en los inputs
+    const handleChange = (e) => {
+        setUsuario({
+            ...usuario,
+            [e.target.name]: e.target.value
         });
-      } else {
-        res = await fetch(`${API_URL}/perfil/${formData.usuario}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            nombre: formData.nombre,
-            apellido: formData.apellido,
-            correo: formData.correo,
-          }),
+    };
+
+    // Guardar cambios (PUT al backend)
+    const guardarCambios = () => {
+        fetch(`http://localhost:3000/usuarios/${idUsuario}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(usuario)
+        })
+        .then(res => res.json())
+        .then(data => {
+            setMensaje("Cambios guardados correctamente ✔️");
+        })
+        .catch(err => {
+            console.log(err);
+            setMensaje("Hubo un error al guardar los cambios ❌");
         });
-      }
+    };
 
-      const data = await res.json();
-      alert(data.message || "Perfil actualizado correctamente");
-    } catch (err) {
-      console.error(err);
-      alert("Error al guardar los cambios");
-    }
-  };
+    return (
+        <div className="perfil-container">
+            <h2>Mi Perfil</h2>
 
-  // 🔹 ELIMINAR CUENTA (DELETE)
-  const handleEliminar = async () => {
-    if (!window.confirm("¿Seguro que quieres eliminar la cuenta?")) return;
+            <div>
+                <label>Nombre:</label>
+                <input
+                    type="text"
+                    name="Nombre"
+                    value={usuario.Nombre}
+                    onChange={handleChange}
+                />
+            </div>
 
-    try {
-      const res = await fetch(`${API_URL}/perfil/${formData.usuario}`, {
-        method: "DELETE",
-      });
+            <div>
+                <label>Apellido:</label>
+                <input
+                    type="text"
+                    name="Apellido"
+                    value={usuario.Apellido}
+                    onChange={handleChange}
+                />
+            </div>
 
-      await res.json();
-      alert("Cuenta eliminada");
-      window.location.href = "/registro";
-    } catch (err) {
-      console.error(err);
-      alert("Error al eliminar la cuenta");
-    }
-  };
+            <div>
+                <label>Correo:</label>
+                <input
+                    type="email"
+                    name="Correo"
+                    value={usuario.Correo}
+                    onChange={handleChange}
+                />
+            </div>
 
-  const handleCerrarSesion = () => {
-    window.location.href = "/login";
-  };
+            <div>
+                <label>Usuario:</label>
+                <input
+                    type="text"
+                    name="Usuario"
+                    value={usuario.Usuario}
+                    onChange={handleChange}
+                />
+            </div>
 
-  return (
-    <div>
-      {/* BARRA SUPERIOR */}
-      <header className="barra-superior">
-        <div className="Lineas" onClick={() => setMenuOpen(!menuOpen)}>
-          <span className={`top_line common ${menuOpen ? "rotate-down" : ""}`}></span>
-          <span className={`middle_line common ${menuOpen ? "hidden" : ""}`}></span>
-          <span className={`bottom_line common ${menuOpen ? "rotate-up" : ""}`}></span>
+            <button onClick={guardarCambios}>Guardar Cambios</button>
+
+            {mensaje && <p>{mensaje}</p>}
         </div>
-
-        <img src={LogoEmpren} alt="Logo" className="logoem" />
-      </header>
-
-      {/* MENÚ LATERAL */}
-      <div className={`Menu ${menuOpen ? "open" : ""}`}>
-        <h1 className="menu_titulo">Menú</h1>
-        <ul>
-          <li><a href="http://localhost:5173/usuarios"><i className="fas fa-user"></i>Usuarios</a></li>
-          <li><a href="http://localhost:5173/registroinventario"><i className="fas fa-clipboard-list"></i>Inventario</a></li>
-          <li><a href="#"><i className="fas fa-cart-plus"></i>Registro De Ventas</a></li>
-          <li><a href="http://localhost:5173/reporteventas"><i className="fas fa-chart-line"></i>Reporte De Ventas</a></li>
-          <li><a href="http://localhost:5173/registrogastos"><i className="fas fa-wallet"></i>Registro De Gastos</a></li>
-          <li><a href="http://localhost:5173/reportegastos"><i className="fas fa-file-invoice-dollar"></i>Reporte De Gastos</a></li>
-          <li><a href="http://localhost:5173/menureporte"><i className="fas fa-dollar-sign"></i>Reporte De Ganancias</a></li>
-          <li><a href="http://localhost:5173/ajustes"><i className="fas fa-cogs"></i>Ajustes</a></li>
-        </ul>
-      </div>
-
-      {/* FORMULARIO */}
-      <div className="contenedor">
-        <h2>Mi Perfil</h2>
-
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="nombre">Nombre:</label>
-          <input id="nombre" value={formData.nombre} onChange={handleChange} required />
-
-          <label htmlFor="apellido">Apellido:</label>
-          <input id="apellido" value={formData.apellido} onChange={handleChange} required />
-
-          <label htmlFor="correo">Correo:</label>
-          <input id="correo" type="email" value={formData.correo} onChange={handleChange} required />
-
-          <label htmlFor="usuario">Usuario:</label>
-          <input id="usuario" value={formData.usuario} onChange={handleChange} required />
-
-          <label htmlFor="imagenInput">
-            <img src={formData.imagen} alt="foto perfil" width="100" />
-          </label>
-
-          <input
-            type="file"
-            id="imagenInput"
-            accept="image/*"
-            onChange={handleImageChange}
-          />
-
-          <button type="submit" className="btn-guardar">Guardar cambios</button>
-          <button type="button" className="btn-eliminar" onClick={handleEliminar}>Eliminar cuenta</button>
-          <button type="button" className="btn-cerrar" onClick={handleCerrarSesion}>Cerrar sesión</button>
-
-          <a href="/ajustes" className="btn-volver">Volver a Ajustes</a>
-        </form>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default Perfil;

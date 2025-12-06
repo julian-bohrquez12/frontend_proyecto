@@ -216,7 +216,7 @@ function ReporteVentas() {
           <div className="modal-contenido" onClick={(e) => e.stopPropagation()}>
             <span className="cerrar" onClick={cerrarModalMetodo}>&times;</span>
 
-            <h2>Productos vendidos por {ventasMetodo}</h2>
+            <h2>Productos vendidos {ventasMetodo}</h2>
 
             <ul>
               {ventasPorMetodo[ventasMetodo]?.map((p, i) => (
