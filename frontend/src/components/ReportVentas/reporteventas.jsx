@@ -64,7 +64,7 @@ function ReporteVentas() {
         <div className="Menu">
           <h1 className="menu_titulo">Menú</h1>
           <ul>
-            <li><a href="http://localhost:5173/usuarios">Usuarios</a></li>
+           
             <li><a href="http://localhost:5173/registroinventario">Inventario</a></li>
             <li><a href="#">Registro De Ventas</a></li>
             <li><a href="http://localhost:5173/reporteventas">Reporte De Ventas</a></li>

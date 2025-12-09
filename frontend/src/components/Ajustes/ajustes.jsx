@@ -49,7 +49,7 @@ export default function Ajustes() {
       <div className={`Menu ${menuOpen ? "open" : ""}`}>
         <h1 className="menu_titulo">Menú</h1>
         <ul>
-          <li><a href="http://localhost:5173/usuarios"><i className="fas fa-user"></i>Usuarios</a></li>
+          
           <li><a href="http://localhost:5173/registroinventario"><i className="fas fa-clipboard-list"></i>Inventario</a></li>
           <li><a href="#"><i className="fas fa-cart-plus"></i>Registro De Ventas</a></li>
           <li><a href="http://localhost:5173/reporteventas"><i className="fas fa-chart-line"></i>Reporte De Ventas</a></li>
