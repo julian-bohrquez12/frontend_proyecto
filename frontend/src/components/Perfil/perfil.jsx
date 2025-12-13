@@ -5,7 +5,7 @@ import LogoEmpren from "../../assets/Logo_Empren.png";
 
 const API_URL = "http://localhost:4000/api/perfil";
 
-const Perfil = () => {
+const Perfil = ({ usuarioId }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -21,43 +21,22 @@ const Perfil = () => {
   //     CARGAR DATOS DEL PERFIL
   // =============================
   useEffect(() => {
-    const usuarioGuardado = localStorage.getItem("usuario_actual");
+    if (!usuarioId) return; // Si no hay usuarioId no hacemos nada
 
-    if (!usuarioGuardado) {
-      console.warn("⚠ No hay usuario guardado en localStorage");
-      return;
-    }
-
-    fetch(`${API_URL}/${usuarioGuardado}`)
+    fetch(`${API_URL}/${usuarioId}`)
       .then((res) => res.json())
       .then((data) => {
         setFormData({
-          nombre: data.Nombre,
-          apellido: data.Apellido,
-          correo: data.Correo,
-          usuario: data.Usuario,
+          nombre: data.Nombre || "",
+          apellido: data.Apellido || "",
+          correo: data.Correo || "",
+          usuario: data.Usuario || "",
           imagen: data.Imagen || "https://via.placeholder.com/100?text=+",
           imagenFile: null,
         });
       })
       .catch((err) => console.log("Error cargando perfil:", err));
-  }, []);
-
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    setFormData({ ...formData, [id]: value });
-  };
-
-  const handleImageChange = (e) => {
-    const archivo = e.target.files[0];
-    if (archivo) {
-      setFormData({
-        ...formData,
-        imagen: URL.createObjectURL(archivo),
-        imagenFile: archivo,
-      });
-    }
-  };
+  }, [usuarioId]);
 
   // =============================
   //     GUARDAR CAMBIOS
@@ -92,7 +71,7 @@ const Perfil = () => {
       }
 
       const data = await res.json();
-      alert(data.message || "Perfil actualizado");
+      alert(data.message || "Perfil actualizado correctamente");
     } catch (err) {
       console.error(err);
       alert("Ocurrió un error al guardar.");
@@ -111,13 +90,17 @@ const Perfil = () => {
       });
 
       await res.json();
-      window.location.href = "/registro";
+      alert("Cuenta eliminada");
+      window.location.href = "/registro"; // redirige a registro
     } catch (err) {
       console.error(err);
       alert("Ocurrió un error al eliminar la cuenta.");
     }
   };
 
+  // =============================
+  //     CERRAR SESIÓN
+  // =============================
   const handleCerrarSesion = () => {
     window.location.href = "/login";
   };
@@ -131,7 +114,6 @@ const Perfil = () => {
           <span className={`middle_line common ${menuOpen ? "hidden" : ""}`}></span>
           <span className={`bottom_line common ${menuOpen ? "rotate-up" : ""}`}></span>
         </div>
-
         <img src={LogoEmpren} alt="Logo" className="logoem" />
       </header>
 
@@ -139,13 +121,13 @@ const Perfil = () => {
       <div className={`Menu ${menuOpen ? "open" : ""}`}>
         <h1 className="menu_titulo">Menú</h1>
         <ul>
-          <li><a href="http://localhost:5173/registroinventario"><i className="fas fa-clipboard-list"></i>Inventario</a></li>
+          <li><a href="/registroinventario"><i className="fas fa-clipboard-list"></i>Inventario</a></li>
           <li><a href="#"><i className="fas fa-cart-plus"></i>Registro De Ventas</a></li>
-          <li><a href="http://localhost:5173/reporteventas"><i className="fas fa-chart-line"></i>Reporte De Ventas</a></li>
-          <li><a href="http://localhost:5173/registrogastos"><i className="fas fa-wallet"></i>Registro De Gastos</a></li>
-          <li><a href="http://localhost:5173/reportegastos"><i className="fas fa-file-invoice-dollar"></i>Reporte De Gastos</a></li>
-          <li><a href="http://localhost:5173/menureporte"><i className="fas fa-dollar-sign"></i>Reporte De Ganancias</a></li>
-          <li><a href="http://localhost:5173/ajustes"><i className="fas fa-cogs"></i>Ajustes</a></li>
+          <li><a href="/reporteventas"><i className="fas fa-chart-line"></i>Reporte De Ventas</a></li>
+          <li><a href="/registrogastos"><i className="fas fa-wallet"></i>Registro De Gastos</a></li>
+          <li><a href="/reportegastos"><i className="fas fa-file-invoice-dollar"></i>Reporte De Gastos</a></li>
+          <li><a href="/menureporte"><i className="fas fa-dollar-sign"></i>Reporte De Ganancias</a></li>
+          <li><a href="/ajustes"><i className="fas fa-cogs"></i>Ajustes</a></li>
         </ul>
       </div>
 
@@ -155,22 +137,24 @@ const Perfil = () => {
 
         <form onSubmit={handleSubmit}>
           <label htmlFor="nombre">Nombre:</label>
-          <input type="text" id="nombre" value={formData.nombre} onChange={handleChange} required />
+          <input type="text" id="nombre" value={formData.nombre} onChange={e => setFormData({ ...formData, nombre: e.target.value })} required />
 
           <label htmlFor="apellido">Apellido:</label>
-          <input type="text" id="apellido" value={formData.apellido} onChange={handleChange} required />
+          <input type="text" id="apellido" value={formData.apellido} onChange={e => setFormData({ ...formData, apellido: e.target.value })} required />
 
           <label htmlFor="correo">Correo:</label>
-          <input type="email" id="correo" value={formData.correo} onChange={handleChange} required />
+          <input type="email" id="correo" value={formData.correo} onChange={e => setFormData({ ...formData, correo: e.target.value })} required />
 
           <label htmlFor="usuario">Usuario:</label>
-          <input type="text" id="usuario" value={formData.usuario} onChange={handleChange} required />
+          <input type="text" id="usuario" value={formData.usuario} onChange={e => setFormData({ ...formData, usuario: e.target.value })} required />
 
           <label htmlFor="imagenInput" className="image-label">
             <img src={formData.imagen} alt="foto perfil" width="100" />
           </label>
-
-          <input type="file" id="imagenInput" accept="image/*" onChange={handleImageChange} />
+          <input type="file" id="imagenInput" accept="image/*" onChange={e => {
+            const archivo = e.target.files[0];
+            if (archivo) setFormData({ ...formData, imagen: URL.createObjectURL(archivo), imagenFile: archivo });
+          }} />
 
           <button type="submit" className="btn-guardar">Guardar cambios</button>
           <button type="button" onClick={handleEliminar} className="btn-eliminar">Eliminar cuenta</button>

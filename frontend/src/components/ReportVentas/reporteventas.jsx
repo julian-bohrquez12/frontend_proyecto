@@ -16,24 +16,20 @@ function ReporteVentas() {
   const [productos, setProductos] = useState([]);
   const [metodosPago, setMetodosPago] = useState([]);
 
-  // 🔥 NUEVO → Modal para métodos de pago
+  // Modal para productos vendidos por método
   const [ventasMetodo, setVentasMetodo] = useState(null);
-
-  // 🔥 NUEVO → Datos ejemplo de productos vendidos por método
-  const ventasPorMetodo = {
-    QR: ["Cuaderno", "Esfero", "Colores"],
-    Efectivo: ["Borrador", "Marcadores"],
-    Datáfono: ["Cuaderno", "Regla"]
-  };
+  const [ventasMetodoData, setVentasMetodoData] = useState([]);
 
   useEffect(() => {
+    // Obtener productos reales
     axios
-      .get("http://localhost:4000/ventas/productos")
+      .get("http://localhost:4000/api/productos") // URL corregida
       .then((res) => setProductos(res.data))
       .catch((err) => console.error("Error cargando productos:", err));
 
+    // Obtener métodos de pago reales
     axios
-      .get("http://localhost:4000/ventas/metodos-pago")
+      .get("http://localhost:4000/api/metodopago") // URL corregida
       .then((res) => setMetodosPago(res.data))
       .catch((err) => console.error("Error cargando métodos de pago:", err));
   }, []);
@@ -41,8 +37,19 @@ function ReporteVentas() {
   const abrirModal = (producto) => setModalData(producto);
   const cerrarModal = () => setModalData(null);
 
-  // 🔥 NUEVO: abrir modal según método de pago
-  const abrirModalMetodo = (metodo) => setVentasMetodo(metodo);
+  // Modal de productos por método de pago
+  const abrirModalMetodo = (metodoId) => {
+    axios
+      .get(`http://localhost:4000/api/reporteventas/metodo/${metodoId}`) 
+      // Aquí asumo que tu backend sí tiene este endpoint para filtrar ventas por método
+      .then((res) => {
+        setVentasMetodoData(res.data);
+        setVentasMetodo(metodoId);
+      })
+      .catch((err) =>
+        console.error("Error cargando productos por método:", err)
+      );
+  };
   const cerrarModalMetodo = () => setVentasMetodo(null);
 
   return (
@@ -64,14 +71,29 @@ function ReporteVentas() {
         <div className="Menu">
           <h1 className="menu_titulo">Menú</h1>
           <ul>
-           
-            <li><a href="http://localhost:5173/registroinventario">Inventario</a></li>
-            <li><a href="#">Registro De Ventas</a></li>
-            <li><a href="http://localhost:5173/reporteventas">Reporte De Ventas</a></li>
-            <li><a href="http://localhost:5173/registrogastos">Registro De Gastos</a></li>
-            <li><a href="http://localhost:5173/reportegastos">Reporte De Gastos</a></li>
-            <li><a href="http://localhost:5173/menureporte">Reporte De Ganancias</a></li>
-            <li><a href="http://localhost:5173/ajustes">Ajustes</a></li>
+            <li>
+              <a href="http://localhost:5173/registroinventario">Inventario</a>
+            </li>
+            <li>
+              <a href="#">Registro De Ventas</a>
+            </li>
+            <li>
+              <a href="http://localhost:5173/reporteventas">
+                Reporte De Ventas
+              </a>
+            </li>
+            <li>
+              <a href="http://localhost:5173/registrogastos">Registro De Gastos</a>
+            </li>
+            <li>
+              <a href="http://localhost:5173/reportegastos">Reporte De Gastos</a>
+            </li>
+            <li>
+              <a href="http://localhost:5173/menureporte">Reporte De Ganancias</a>
+            </li>
+            <li>
+              <a href="http://localhost:5173/ajustes">Ajustes</a>
+            </li>
           </ul>
         </div>
       </label>
@@ -92,8 +114,8 @@ function ReporteVentas() {
                 abrirModal({
                   producto: prod.Nombre,
                   precio: prod.Precio,
-                  cantidad: prod.Cantidad,
-                  fecha: prod.Fecha || "Sin fecha",
+                  cantidad: prod.Cantidad || "N/A",
+                  fecha: prod.Fecha_Venta || "Sin fecha",
                   imagen: prod.Imagen || Cuaderno,
                 })
               }
@@ -107,56 +129,7 @@ function ReporteVentas() {
             </button>
           ))
         ) : (
-          <>
-            {/* Productos estáticos */}
-            <button
-              className="product-btn"
-              onClick={() =>
-                abrirModal({
-                  producto: "Cuaderno",
-                  precio: "3.000",
-                  cantidad: "15",
-                  fecha: "18/04/2025",
-                  imagen: Cuaderno,
-                })
-              }
-            >
-              <img src={Cuaderno} alt="Cuaderno" className="img-producto" />
-              <p className="texto-producto">Cuaderno</p>
-            </button>
-
-            <button
-              className="product-btn"
-              onClick={() =>
-                abrirModal({
-                  producto: "Esfero",
-                  precio: "1.500",
-                  cantidad: "10",
-                  fecha: "18/04/2025",
-                  imagen: Esfero,
-                })
-              }
-            >
-              <img src={Esfero} alt="Esfero" className="img-producto" />
-              <p className="texto-producto">Esfero</p>
-            </button>
-
-            <button
-              className="product-btn"
-              onClick={() =>
-                abrirModal({
-                  producto: "Borrador",
-                  precio: "500",
-                  cantidad: "8",
-                  fecha: "18/04/2025",
-                  imagen: Borrador,
-                })
-              }
-            >
-              <img src={Borrador} alt="Borrador" className="img-producto" />
-              <p className="texto-producto">Borrador</p>
-            </button>
-          </>
+          <p>Cargando productos...</p>
         )}
       </div>
 
@@ -168,9 +141,15 @@ function ReporteVentas() {
               &times;
             </span>
             <h2>{modalData.producto}</h2>
-            <p><strong>Precio:</strong> {modalData.precio}</p>
-            <p><strong>Cantidad comprada:</strong> {modalData.cantidad}</p>
-            <p><strong>Fecha:</strong> {modalData.fecha}</p>
+            <p>
+              <strong>Precio:</strong> {modalData.precio}
+            </p>
+            <p>
+              <strong>Cantidad comprada:</strong> {modalData.cantidad}
+            </p>
+            <p>
+              <strong>Fecha:</strong> {modalData.fecha}
+            </p>
             <img
               src={modalData.imagen}
               alt={modalData.producto}
@@ -183,45 +162,40 @@ function ReporteVentas() {
       {/* Métodos de pago */}
       <h2 className="subtitle">Método de pago:</h2>
       <div className="payments">
-        <>
-          <button
-            className="pay-btn"
-            onClick={() => abrirModalMetodo("QR")}
-          >
-            <img src={QR} alt="QR" className="icono-pago" />
-            <p className="texto-pago">QR</p>
-          </button>
-
-          <button
-            className="pay-btn"
-            onClick={() => abrirModalMetodo("Efectivo")}
-          >
-            <img src={Efectivo} alt="Efectivo" className="icono-pago" />
-            <p className="texto-pago">Efectivo</p>
-          </button>
-
-          <button
-            className="pay-btn"
-            onClick={() => abrirModalMetodo("Datáfono")}
-          >
-            <img src={Datafono} alt="Datáfono" className="icono-pago" />
-            <p className="texto-pago">Datáfono</p>
-          </button>
-        </>
+        {metodosPago.length > 0 ? (
+          metodosPago.map((m) => (
+            <button
+              key={m.Id_Metodo}
+              className="pay-btn"
+              onClick={() => abrirModalMetodo(m.Id_Metodo)}
+            >
+              <p className="texto-pago">{m.Nombre}</p>
+            </button>
+          ))
+        ) : (
+          <p>Cargando métodos de pago...</p>
+        )}
       </div>
 
-      {/* 🔥 Nuevo modal: Productos vendidos por método */}
+      {/* Modal de productos por método */}
       {ventasMetodo && (
         <div className="modal" onClick={cerrarModalMetodo}>
           <div className="modal-contenido" onClick={(e) => e.stopPropagation()}>
-            <span className="cerrar" onClick={cerrarModalMetodo}>&times;</span>
-
-            <h2>Productos vendidos {ventasMetodo}</h2>
+            <span className="cerrar" onClick={cerrarModalMetodo}>
+              &times;
+            </span>
+            <h2>Productos vendidos con ID: {ventasMetodo}</h2>
 
             <ul>
-              {ventasPorMetodo[ventasMetodo]?.map((p, i) => (
-                <li key={i}>• {p}</li>
-              ))}
+              {ventasMetodoData.length > 0 ? (
+                ventasMetodoData.map((p, i) => (
+                  <li key={i}>
+                    {p.Nombre} - Precio: {p.Precio} - Fecha: {p.Fecha_Venta}
+                  </li>
+                ))
+              ) : (
+                <li>No hay ventas registradas</li>
+              )}
             </ul>
           </div>
         </div>
