@@ -13,7 +13,8 @@ function ReporteVentas() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:4000/api/productos")
+      // 🔹 CAMBIO MÍNIMO: endpoint correcto
+      .get("http://localhost:4000/api/reporteventas")
       .then((res) => setProductos(res.data))
       .catch((err) => console.error("Error cargando productos:", err));
   }, []);
@@ -65,23 +66,23 @@ function ReporteVentas() {
             <Carousel.Item key={index}>
               <img
                 src={prod.Imagen || Cuaderno}
-                alt={prod.Nombre}
+                alt={prod.Producto || prod.Nombre}
                 className="d-block w-100 img-producto"
                 style={{ cursor: "pointer" }}
                 onClick={() =>
                   abrirModal({
-                    producto: prod.Nombre,
+                    producto: prod.Producto || prod.Nombre,
                     precio: prod.Precio,
-                    // 🔹 CAMBIO MÍNIMO AQUÍ
+                    // 🔹 CAMBIOS EXACTOS AQUÍ
                     cantidad: prod.Cantidad ?? "N/A",
-                    fecha: prod.Fecha ?? "Sin fecha",
+                    fecha: prod.Fecha_Venta ?? "Sin fecha",
                     imagen: prod.Imagen || Cuaderno,
-                    metodoPago: prod.Metodo_Pago ?? "No especificado"
+                    metodoPago: prod.MetodoPago ?? "No especificado"
                   })
                 }
               />
               <Carousel.Caption>
-                <h5>{prod.Nombre}</h5>
+                <h5>{prod.Producto || prod.Nombre}</h5>
               </Carousel.Caption>
             </Carousel.Item>
           ))}
