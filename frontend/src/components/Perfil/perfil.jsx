@@ -116,20 +116,29 @@ const Perfil = ({ usuarioId }) => {
         </div>
         <img src={LogoEmpren} alt="Logo" className="logoem" />
       </header>
+{/* Menú lateral */}
+      <label>
+        <input className="lineas-check" type="checkbox" />
+        <div className="Lineas">
+          <span className="top_line common"></span>
+          <span className="middle_line common"></span>
+          <span className="bottom_line common"></span>
+        </div>
 
-      {/* Menú lateral */}
-      <div className={`Menu ${menuOpen ? "open" : ""}`}>
-        <h1 className="menu_titulo">Menú</h1>
-        <ul>
-          <li><a href="/registroinventario"><i className="fas fa-clipboard-list"></i>Inventario</a></li>
+        <div className="Menu">
+          <h1 className="menu_titulo">Menú</h1>
+          <ul> 
+          <li><a href="http://localhost:5173/registroinventario">Inventario</a></li>
           <li><a href="#"><i className="fas fa-cart-plus"></i>Registro De Ventas</a></li>
-          <li><a href="/reporteventas"><i className="fas fa-chart-line"></i>Reporte De Ventas</a></li>
+          <li><a href="http://localhost:5173/reporteventas">Reporte De Ventas</a></li>
           <li><a href="/registrogastos"><i className="fas fa-wallet"></i>Registro De Gastos</a></li>
           <li><a href="/reportegastos"><i className="fas fa-file-invoice-dollar"></i>Reporte De Gastos</a></li>
           <li><a href="/menureporte"><i className="fas fa-dollar-sign"></i>Reporte De Ganancias</a></li>
-          <li><a href="/ajustes"><i className="fas fa-cogs"></i>Ajustes</a></li>
-        </ul>
-      </div>
+          <li><a href="http://localhost:5173/ajustes">Ajustes</a></li>
+          </ul>
+        </div>
+      </label>
+
 
       {/* Contenido principal */}
       <div className="contenedor">
